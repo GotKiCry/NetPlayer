@@ -27,6 +27,10 @@ class MainActivity : BaseActivity() {
 
     }
 
+    override fun onGetMsgEvent(event: MsgEvent, isSticky: Boolean) {
+
+    }
+
 
     private fun openWebDAVFileList(){
         val beginTransaction = supportFragmentManager.beginTransaction()
@@ -34,7 +38,5 @@ class MainActivity : BaseActivity() {
         beginTransaction.commit()
     }
 
-    override fun onGetMsgEvent(event: MsgEvent) {
 
-    }
 }

@@ -4,11 +4,18 @@ import android.app.Service
 import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
+import android.util.Log
 import com.gotkicry.netplayer.event.MsgEvent
+import com.gotkicry.netplayer.util.LogUtil
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import org.videolan.libvlc.LibVLC.Event
 import java.io.File
+import java.io.FileOutputStream
 import java.io.InputStream
 
 class CacheTempVideoService : Service() {
@@ -26,38 +33,48 @@ class CacheTempVideoService : Service() {
     }
 
     override fun onBind(intent: Intent): IBinder {
+        LogUtil.d("onBind")
         return binder
     }
 
     override fun onCreate() {
+        LogUtil.d("on Service Create")
         super.onCreate()
-        EventBus.getDefault().register(this)
     }
 
-    @Subscribe
-    fun getMsg(msgEvent: MsgEvent){
-        if (msgEvent.msg == MsgEvent.CACHE){
-            if (msgEvent.msgData is InputStream){
-                canCache = true
-                createTempVideoFile(msgEvent.msgData)
-            }
-        }
-
+    fun stopCache(){
+        canCache = false
     }
 
-    private fun createTempVideoFile(inputStream:InputStream){
+    fun createTempVideoFile(inputStream:InputStream,onCache:(filePath:String)->Unit){
+        Log.d("GotKiCry","LoadTemp")
+        canCache = true
         val cacheDir = this.applicationContext.cacheDir
         if (cacheDir.exists().not()){
             cacheDir.mkdirs()
         }
-        while (inputStream.read(buffCache) != 0 && canCache){
-            val file = File(cacheDir, "cacheVideo")
-            if (file.exists()){
-                file.deleteRecursively()
-                file.createNewFile()
-            }
-            file.outputStream().write(buffCache,0,buffCache.count())
+        val file = File(cacheDir, "cacheVideo")
+        if (file.exists()){
+            file.deleteRecursively()
+            file.createNewFile()
         }
+        val outputStream = file.outputStream()
+        CoroutineScope(Dispatchers.IO).launch {
+
+            inputStream.use { input->
+                val buffer = ByteArray(1024)
+                var bytesRead: Int
+                outputStream.use {output->
+                    while (input.read(buffer).also { bytesRead = it } != -1) {
+                        // 在这里处理读取到的数据，例如打印到控制台
+                        output.write(buffer, 0, bytesRead)
+                        onCache(file.absolutePath)
+                    }
+                }
+
+            }
+        }
+
     }
 
     override fun onDestroy() {
@@ -65,7 +82,6 @@ class CacheTempVideoService : Service() {
         val cacheDir = this.applicationContext.cacheDir
         val file = File(cacheDir, "cacheVideo")
         file.deleteRecursively()
-        EventBus.getDefault().unregister(this)
     }
 
 

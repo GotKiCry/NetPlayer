@@ -15,6 +15,7 @@ import com.thegrizzlylabs.sardineandroid.DavResource
 import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
 import java.io.IOException
+import java.io.InputStream
 
 class WebDAVViewModel() : ViewModel() {
     companion object{
@@ -57,8 +58,8 @@ class WebDAVViewModel() : ViewModel() {
         }
     }
 
-    fun getWebDAVUrl(params:String? = null):String{
-       return getDefConfig().getConnectURL(params)
+     fun getDownloadUrl(url:String):String{
+        return getDefConfig().getDownloadUrl(url)
     }
 
 }

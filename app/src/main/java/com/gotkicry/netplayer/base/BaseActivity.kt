@@ -10,7 +10,6 @@ import org.greenrobot.eventbus.ThreadMode
 
 abstract class BaseActivity : AppCompatActivity() {
 
-    @Subscribe
     @CallSuper
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,7 +22,12 @@ abstract class BaseActivity : AppCompatActivity() {
         onGetMsgEvent(event)
     }
 
-    abstract fun onGetMsgEvent(event: MsgEvent)
+    @Subscribe(threadMode = ThreadMode.MAIN,sticky = true)
+    fun getStickyMsg(event: MsgEvent){
+        onGetMsgEvent(event,true)
+    }
+
+    abstract fun onGetMsgEvent(event: MsgEvent,isSticky :Boolean = false)
 
     override fun onDestroy() {
         super.onDestroy()

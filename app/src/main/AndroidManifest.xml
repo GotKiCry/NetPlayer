@@ -34,7 +34,9 @@
         <activity
             android:name=".view.VLCPlayerActivity"
             android:enableOnBackInvokedCallback="true"
+            android:screenOrientation="sensorLandscape"
             android:exported="true"
+            android:theme="@style/Theme.FullScreen"
             tools:targetApi="tiramisu"/>
     </application>
 

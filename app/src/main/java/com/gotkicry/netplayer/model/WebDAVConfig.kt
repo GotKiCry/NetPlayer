@@ -1,5 +1,8 @@
 package com.gotkicry.netplayer.model
 
+import android.net.Uri
+import com.gotkicry.netplayer.util.LogUtil
+
 data class WebDAVConfig(
     var userName: String = "",
     var password: String = "",
@@ -17,8 +20,21 @@ data class WebDAVConfig(
                 urlSuffix = urlSuffix.removeRange(0,1)
             }
         }
-        
-        return "${getStartHttp()}://${baseURL}:${getPORT()}/${urlSuffix}"
+        urlSuffix = Uri.encode(urlSuffix)
+        val url = "${getStartHttp()}://${baseURL}:${getPORT()}/${urlSuffix}"
+        LogUtil.d("getConnectURL : $url")
+        return url
+    }
+
+    fun getDownloadUrl(dirName: String):String{
+        var urlSuffix = dirName
+        if (urlSuffix.first() == '/'){
+            urlSuffix = urlSuffix.removeRange(0,1)
+        }
+        urlSuffix = Uri.encode(urlSuffix)
+        val url = "${getStartHttp()}://${userName}:${password}@${baseURL}:${getPORT()}/${urlSuffix}"
+        LogUtil.d("getDownloadUrl : $url")
+        return url
     }
 
     private fun getStartHttp():String{

@@ -43,7 +43,7 @@ dependencies {
     implementation("com.google.android.material:material:1.10.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
-    implementation("androidx.activity:activity-ktx:1.8.0")
+    implementation("androidx.activity:activity-ktx:1.8.1")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
@@ -52,7 +52,7 @@ dependencies {
     //WebDAV
     implementation("com.github.thegrizzlylabs:sardine-android:0.8")
     //VLC
-    implementation("org.videolan.android:libvlc-all:4.0.0-eap13")
+    implementation("org.videolan.android:libvlc-all:3.6.0-eap10")
     //EventBus
     implementation("org.greenrobot:eventbus:3.3.1")
 }
